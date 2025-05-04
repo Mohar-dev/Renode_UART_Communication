@@ -1,0 +1,26 @@
+# Create first MCU
+mach create "mcu1"
+machine LoadPlatformDescription @two_mcu_uart.repl
+sysbus LoadELF @UART_PROTOCOL_TESTING_TX.elf
+
+# Create a UART link server
+#connector CreateUartServer "uart_link" 4321
+#connector Connect sysbus.uart1 uart_link
+
+# Create second MCU
+mach create "mcu2"
+machine LoadPlatformDescription @two_mcu_uart.repl
+#sysbus.cpu LogFunctionNames true
+sysbus LoadELF @UART_PROTOCOL_TESTING_RX.elf
+
+#connector Connect sysbus.uart1 uart_link
+
+# Connect the UARTs directly without connector CreateUartServer
+mach set 0
+showAnalyzer sysbus.usart1
+#sysbus.usart1 Connect sysbus@machine:mcu2:sysbus.usart1
+mach set 1
+showAnalyzer sysbus.usart1
+
+# Start the simulation
+start
